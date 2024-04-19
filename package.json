@@ -1,0 +1,11 @@
+{
+  "name": "@mkar/monorepo-root-deps",
+  "private": true,
+  "dependencies": {
+    "@turbo/repository": "0.0.1-canary.9",
+    "glob": "^10.3.12",
+    "typescript": "*"
+  },
+  "bin": "index.mjs",
+  "packageManager": "pnpm@8.14.0"
+}
