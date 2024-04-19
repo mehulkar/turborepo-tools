@@ -59,3 +59,7 @@ pass it in as this flag option.
 Same as `--skip`, except you can use prefixes. E.g. `--skip-prefix="@types/"`. Another useful thing
 is to pass the prefix you use for internal dependencies. E.g. if all your internal packages are named
 `@repo/whatever` , you can use `--skip-prefix=@repo/` to skip moving them.
+
+### `--include-dev`
+
+Include devDependencies from root package.json. Defaults to true, but you can turn it off.

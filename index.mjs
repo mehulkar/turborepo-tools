@@ -42,6 +42,10 @@ const { values: flags } = parseArgs({
       multiple: true,
       default: [], // TODO: not sure why, but default isn't working
     },
+    "include-dev": {
+      type: "boolean",
+      default: true,
+    },
   },
   strict: true,
 });
@@ -50,6 +54,7 @@ console.log(flags);
 
 const projectDir = resolve(flags.directory);
 const dryRun = flags["dry-run"];
+const includeDevDeps = flags["include-dev"];
 
 if (dryRun) {
   console.log("doing dry run");
@@ -98,7 +103,13 @@ export async function main() {
   }
 
   const rootPackageJson = await readPackageJson(rootPackageJsonPath);
-  const allRootDeps = rootPackageJson.dependencies || {};
+  let allRootDeps = {
+    ...rootPackageJson.dependencies,
+  };
+
+  if (includeDevDeps) {
+    allRootDeps = { ...allRootDeps, ...rootPackageJson.devDependencies };
+  }
 
   const skipped = {}; // TODO: do something with skipped deps
   const rootDeps = Object.keys(allRootDeps).reduce((m, key) => {
