@@ -29,11 +29,13 @@ const { values: flags } = parseArgs({
       type: "string",
       multiple: true,
       short: "p",
+      default: [],
     },
     skip: {
       type: "string",
       multiple: true,
       short: "s",
+      default: [],
     },
   },
   strict: true,
