@@ -1,6 +1,7 @@
 {
   "name": "@mkar/monorepo-root-deps",
   "homepage": "https://github.com/mehulkar/monorepo-root-deps",
+  "version": "0.0.0",
   "dependencies": {
     "@turbo/repository": "0.0.1-canary.9",
     "glob": "^10.3.1",
