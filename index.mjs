@@ -88,7 +88,7 @@ function getPrintable(str, minWidth) {
   return `[${str}]`.padEnd(minWidth + 2, ".");
 }
 
-async function main() {
+export async function main() {
   const rootPackageJsonPath = join(projectDir, "package.json");
   const packages = await readWorkspacePackages(projectDir);
   console.log(`${packages.length} packages found in ${projectDir}`);
@@ -262,5 +262,3 @@ async function main() {
 
   await writePackageJson(rootPackageJsonPath, rootPackageJson);
 }
-
-main().catch(console.error);
