@@ -48,13 +48,12 @@ function getImportsFromFile(fileName) {
 // for all .ts files in this directory, check if they import the dependency
 // returns a list of files that import the dependency
 export async function getImportsInDirectory(rootDir, directory) {
-  const files = await glob(`${directory}/**/*.ts`, {
+  const files = await glob(`${rootDir}/${directory}/**/*.ts`, {
     ignore: "**/node_modules/**",
   });
 
   const all = new Map();
-  for (const file of files) {
-    const filePath = join(rootDir, file);
+  for (const filePath of files) {
     const importsFromFile = getImportsFromFile(filePath);
 
     const pkgNames = getPackageNamesFromImports(importsFromFile);

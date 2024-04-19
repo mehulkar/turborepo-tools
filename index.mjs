@@ -4,7 +4,7 @@ import { Workspace } from "@turbo/repository";
 import { getImportsInDirectory } from "./get.mjs";
 import { debuglog, parseArgs } from "node:util";
 
-const debug = debuglog("debug");
+const debug = debuglog("monorepo");
 
 const { values: flags } = parseArgs({
   options: {
@@ -48,7 +48,7 @@ const { values: flags } = parseArgs({
 
 console.log(flags);
 
-const projectDir = flags.directory;
+const projectDir = resolve(flags.directory);
 const dryRun = flags["dry-run"];
 
 if (dryRun) {
@@ -130,7 +130,7 @@ async function main() {
 
   const importsForPackage = {}; // cache imports for each project
 
-  let counter = 0; // counts number of   rootDeps we've moved
+  let counter = 0; // counts number of rootDeps we've moved
 
   const rootDepsMinWidth = getMinWidth(Object.keys(rootDeps));
 
@@ -148,7 +148,6 @@ async function main() {
 
     for (const pkg of packages) {
       const pkgJSONPath = join(projectDir, pkg, "package.json");
-
       // Check that there's a package.json, otherwise continue
       // eslint-disable-next-line no-await-in-loop
       if (!(await fs.stat(pkgJSONPath).catch(() => false))) {
@@ -203,7 +202,7 @@ async function main() {
   const pkgNames = Object.keys(packageUpdates).map((pkgJSONPath) =>
     dirname(relative(projectDir, pkgJSONPath))
   );
-  console.log("pkgNames", pkgNames);
+
   const packageUpdatesMinWidth = getMinWidth(pkgNames);
 
   await Promise.all(
