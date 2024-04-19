@@ -267,6 +267,7 @@ export async function main() {
       console.log(`(${i}/${total}) rm ${dep}`);
       if (!dryRun) {
         delete rootPackageJson.dependencies[dep];
+        delete rootPackageJson.devDependencies[dep];
       }
     }
   }
