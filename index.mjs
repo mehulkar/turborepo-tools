@@ -37,6 +37,11 @@ const { values: flags } = parseArgs({
       short: "s",
       default: [],
     },
+    "skip-prefix": {
+      type: "string",
+      multiple: true,
+      default: [],
+    },
   },
   strict: true,
 });
@@ -54,6 +59,7 @@ if (dryRun) {
 // or for some either caused CI to break. We can probably move them individually
 const DO_NOT_MOVE_THESE_DEPS = flags.skip;
 const KEEP_PRISTINE = flags.pristine;
+const SKIP_PREFIX = flags["skip-prefix"];
 
 async function readWorkspacePackages(dir) {
   const workspace = await Workspace.find(dir);
@@ -96,12 +102,7 @@ async function main() {
 
   const skipped = {}; // TODO: do something with skipped deps
   const rootDeps = Object.keys(allRootDeps).reduce((m, key) => {
-    if (key.startsWith("@api/")) {
-      skipped[key] = allRootDeps[key];
-      return m;
-    }
-
-    if (key.startsWith("@types/")) {
+    if (SKIP_PREFIX.some((prefix) => key.startsWith(prefix))) {
       skipped[key] = allRootDeps[key];
       return m;
     }
