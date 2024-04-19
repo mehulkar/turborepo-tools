@@ -29,18 +29,18 @@ const { values: flags } = parseArgs({
       type: "string",
       multiple: true,
       short: "p",
-      default: [],
+      default: [], // TODO: not sure why, but default isn't working
     },
     skip: {
       type: "string",
       multiple: true,
       short: "s",
-      default: [],
+      default: [], // TODO: not sure why, but default isn't working
     },
     "skip-prefix": {
       type: "string",
       multiple: true,
-      default: [],
+      default: [], // TODO: not sure why, but default isn't working
     },
   },
   strict: true,
@@ -57,9 +57,9 @@ if (dryRun) {
 
 // Some packages that are either used globally in scripts
 // or for some either caused CI to break. We can probably move them individually
-const DO_NOT_MOVE_THESE_DEPS = flags.skip;
-const KEEP_PRISTINE = flags.pristine;
-const SKIP_PREFIX = flags["skip-prefix"];
+const DO_NOT_MOVE_THESE_DEPS = flags.skip ?? [];
+const KEEP_PRISTINE = flags.pristine ?? [];
+const SKIP_PREFIX = flags["skip-prefix"] ?? [];
 
 async function readWorkspacePackages(dir) {
   const workspace = await Workspace.find(dir);
