@@ -223,10 +223,7 @@ export async function main() {
       // Check the cache first, since this is in a loop and
       // we don't want to analyze the files every time.
       if (!importsForPackage[pkg]) {
-        // eslint-disable-next-line no-await-in-loop
-        let importablePkg = pkg;
-
-        const _imports = await getImportsInDirectory(projectDir, importablePkg);
+        const _imports = await getImportsInDirectory(projectDir, pkg);
         importsForPackage[pkg] = _imports;
       }
 
