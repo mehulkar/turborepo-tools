@@ -61,6 +61,20 @@ const { values: flags } = parseArgs({
       type: "boolean",
       default: true,
     },
+
+    // Handle `@types/*` dependencies in root package.json. This uses naming conventions
+    // For `@types/foo`, it will look for imports of 'foo' to determine whether `@types/foo` should
+    // be moved.
+    "include-types": {
+      type: "boolean",
+      default: true,
+    },
+
+    "only-prefix": {
+      type: "string",
+      multiple: true,
+      default: [],
+    },
   },
   strict: true,
 });
@@ -70,12 +84,30 @@ console.log(flags);
 const projectDir = resolve(flags.directory);
 const dryRun = flags["dry-run"];
 const includeDevDeps = flags["include-dev"];
+const includeTypes = flags["include-types"];
 const DO_NOT_MOVE_THESE_DEPS = flags.skip ?? [];
+const ONLY_PREFIX = flags["only-prefix"] ?? [];
 const KEEP_PRISTINE = flags.pristine ?? [];
 const SKIP_PREFIX = flags["skip-prefix"] ?? [];
 
 if (dryRun) {
   console.log("doing dry run");
+}
+
+if (SKIP_PREFIX.includes("@types/") && includeTypes) {
+  throw new Error(
+    "--skip-prefix=@types/ and --include-types don't make sense together"
+  );
+}
+
+if (ONLY_PREFIX.length > 0) {
+  if (DO_NOT_MOVE_THESE_DEPS.length > 0) {
+    throw new Error("Cannot use both --only-prefix && --skip together");
+  }
+
+  if (SKIP_PREFIX.length > 0) {
+    throw new Error("Cannot use both --only-prefix && --skip-prefix together");
+  }
 }
 
 async function readWorkspacePackages(dir) {
@@ -106,6 +138,7 @@ function getPrintable(str, minWidth) {
 }
 
 export async function main() {
+  console.log("hi");
   const rootPackageJsonPath = join(projectDir, "package.json");
   const packages = await readWorkspacePackages(projectDir);
   console.log(`${packages.length} packages found in ${projectDir}`);
@@ -124,7 +157,16 @@ export async function main() {
   }
 
   const skipped = {}; // TODO: do something with skipped deps
+
   const rootDeps = Object.keys(allRootDeps).reduce((m, key) => {
+    // ONLY_PREFIX shouldn't conflict with SKIP_PREFIX
+    if (ONLY_PREFIX.length > 0) {
+      if (!ONLY_PREFIX.some((prefix) => key.startsWith(prefix))) {
+        skipped[key] = allRootDeps[key];
+        return m;
+      }
+    }
+
     if (SKIP_PREFIX.some((prefix) => key.startsWith(prefix))) {
       skipped[key] = allRootDeps[key];
       return m;
@@ -182,15 +224,22 @@ export async function main() {
       // we don't want to analyze the files every time.
       if (!importsForPackage[pkg]) {
         // eslint-disable-next-line no-await-in-loop
-        const _imports = await getImportsInDirectory(projectDir, pkg);
+        let importablePkg = pkg;
+
+        const _imports = await getImportsInDirectory(projectDir, importablePkg);
         importsForPackage[pkg] = _imports;
       }
 
       // Get from the newly populated cache
       const imports = importsForPackage[pkg];
 
+      let importableDependency = dependency;
+      if (includeTypes && dependency.startsWith("@types/")) {
+        importableDependency = dependency.split("@types/")[1];
+      }
+
       // The dependency key wouldn't be in imports if no files are importing it.
-      if (!imports.get(dependency)) {
+      if (!imports.get(importableDependency)) {
         continue;
       }
 
