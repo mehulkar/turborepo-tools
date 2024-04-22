@@ -8,29 +8,42 @@ const debug = debuglog("monorepo");
 
 const { values: flags } = parseArgs({
   options: {
+    // The path to your repo. In most cases, just do `-d .` when you're already in the repo dir.
     directory: {
       type: "string",
       multiple: false,
       short: "d",
       default: ".",
     },
+
+    // No diffs at the end, just the logs
     "dry-run": {
       type: "boolean",
       multiple: false,
       default: false,
     },
+
+    // Limit the number of moved dependencies. If you have a lot you might just want to do a
+    // few at a time so the diff is more easily reviewable.
     limit: {
       type: "string",
       multiple: false,
       short: "l",
       default: "10",
     },
+
+    // No diffs to these directories. If the directories are packages, and they have imports
+    // those imports will stay in the root package.json.
+    // TODO: allow including directories that _aren't_ packages.
     pristine: {
       type: "string",
       multiple: true,
       short: "p",
       default: [], // TODO: not sure why, but default isn't working
     },
+
+    // Some packages that are either used globally in scripts or for some
+    // either caused CI to break. We can probably move them individually
     skip: {
       type: "string",
       multiple: true,
@@ -42,6 +55,8 @@ const { values: flags } = parseArgs({
       multiple: true,
       default: [], // TODO: not sure why, but default isn't working
     },
+
+    // Include devDependencies
     "include-dev": {
       type: "boolean",
       default: true,
@@ -55,16 +70,13 @@ console.log(flags);
 const projectDir = resolve(flags.directory);
 const dryRun = flags["dry-run"];
 const includeDevDeps = flags["include-dev"];
+const DO_NOT_MOVE_THESE_DEPS = flags.skip ?? [];
+const KEEP_PRISTINE = flags.pristine ?? [];
+const SKIP_PREFIX = flags["skip-prefix"] ?? [];
 
 if (dryRun) {
   console.log("doing dry run");
 }
-
-// Some packages that are either used globally in scripts
-// or for some either caused CI to break. We can probably move them individually
-const DO_NOT_MOVE_THESE_DEPS = flags.skip ?? [];
-const KEEP_PRISTINE = flags.pristine ?? [];
-const SKIP_PREFIX = flags["skip-prefix"] ?? [];
 
 async function readWorkspacePackages(dir) {
   const workspace = await Workspace.find(dir);
