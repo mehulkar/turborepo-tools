@@ -75,6 +75,11 @@ const { values: flags } = parseArgs({
       multiple: true,
       default: [],
     },
+    only: {
+      type: "string",
+      multiple: true,
+      default: [],
+    },
   },
   strict: true,
 });
@@ -85,7 +90,8 @@ const projectDir = resolve(flags.directory);
 const dryRun = flags["dry-run"];
 const includeDevDeps = flags["include-dev"];
 const includeTypes = flags["include-types"];
-const DO_NOT_MOVE_THESE_DEPS = flags.skip ?? [];
+const SKIP = flags.skip ?? [];
+const ONLY = flags.only ?? [];
 const ONLY_PREFIX = flags["only-prefix"] ?? [];
 const KEEP_PRISTINE = flags.pristine ?? [];
 const SKIP_PREFIX = flags["skip-prefix"] ?? [];
@@ -101,12 +107,22 @@ if (SKIP_PREFIX.includes("@types/") && includeTypes) {
 }
 
 if (ONLY_PREFIX.length > 0) {
-  if (DO_NOT_MOVE_THESE_DEPS.length > 0) {
+  if (SKIP.length > 0) {
     throw new Error("Cannot use both --only-prefix && --skip together");
   }
 
   if (SKIP_PREFIX.length > 0) {
     throw new Error("Cannot use both --only-prefix && --skip-prefix together");
+  }
+}
+
+if (ONLY.length > 0) {
+  if (SKIP.length > 0) {
+    throw new Error("Cannot use both --only && --skip together");
+  }
+
+  if (SKIP_PREFIX.length > 0) {
+    throw new Error("Cannot use both --only && --skip-prefix together");
   }
 }
 
@@ -138,7 +154,6 @@ function getPrintable(str, minWidth) {
 }
 
 export async function main() {
-  console.log("hi");
   const rootPackageJsonPath = join(projectDir, "package.json");
   const packages = await readWorkspacePackages(projectDir);
   console.log(`${packages.length} packages found in ${projectDir}`);
@@ -167,12 +182,17 @@ export async function main() {
       }
     }
 
+    if (!ONLY.includes(key)) {
+      skipped[key] = allRootDeps[key];
+      return m;
+    }
+
     if (SKIP_PREFIX.some((prefix) => key.startsWith(prefix))) {
       skipped[key] = allRootDeps[key];
       return m;
     }
 
-    if (DO_NOT_MOVE_THESE_DEPS.includes(key)) {
+    if (SKIP.includes(key)) {
       skipped[key] = allRootDeps[key];
       return m;
     }
