@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import { join, resolve, relative, dirname } from "path";
-import { Workspace } from "@turbo/repository";
+import { readWorkspacePackages, getMinWidth, getPrintable } from "./utils.mjs";
 import { getImportsInDirectory } from "./get.mjs";
 import { debuglog, parseArgs } from "node:util";
 
@@ -126,13 +126,6 @@ if (ONLY.length > 0) {
   }
 }
 
-async function readWorkspacePackages(dir) {
-  const workspace = await Workspace.find(dir);
-  const packages = await workspace.findPackages();
-  const directories = packages.map((p) => p.relativePath).sort();
-  return directories;
-}
-
 async function readPackageJson(filePath) {
   const fileContents = await fs.readFile(filePath, "utf8");
   return JSON.parse(fileContents);
@@ -143,24 +136,17 @@ async function writePackageJson(filePath, content) {
   await fs.writeFile(filePath, `${stringified}\n`, "utf8");
 }
 
-function getMinWidth(strings) {
-  const longest = strings.reduce((a, b) => (a.length > b.length ? a : b), "");
-  return longest.length + 5;
-}
-
-function getPrintable(str, minWidth) {
-  // Add 2 because we are adding square brackets
-  return `[${str}]`.padEnd(minWidth + 2, ".");
-}
-
 export async function main() {
   const rootPackageJsonPath = join(projectDir, "package.json");
-  const packages = await readWorkspacePackages(projectDir);
-  console.log(`${packages.length} packages found in ${projectDir}`);
+  const _packages = await readWorkspacePackages(projectDir);
+  console.log(`${_packages.length} packages found in ${projectDir}`);
 
-  if (!packages.length) {
+  if (!_packages.length) {
     return;
   }
+
+  // weird naming because i'm too lazy to go update the references
+  const packages = _packages.map((p) => p.relativePath).sort();
 
   const rootPackageJson = await readPackageJson(rootPackageJsonPath);
   let allRootDeps = {
@@ -202,12 +188,12 @@ export async function main() {
   }, {});
 
   const numOfRootDeps = Object.keys(rootDeps).length;
-  console.log(`${rootPackageJsonPath} found ${numOfRootDeps} deps`);
-
   if (!numOfRootDeps) {
     console.log(`${rootPackageJsonPath} found no deps`);
     return;
   }
+
+  console.log(`${rootPackageJsonPath} found ${numOfRootDeps} deps`);
 
   const packageUpdates = {};
   const movedDependencies = {};
@@ -234,7 +220,6 @@ export async function main() {
     for (const pkg of packages) {
       const pkgJSONPath = join(projectDir, pkg, "package.json");
       // Check that there's a package.json, otherwise continue
-      // eslint-disable-next-line no-await-in-loop
       if (!(await fs.stat(pkgJSONPath).catch(() => false))) {
         continue;
       }

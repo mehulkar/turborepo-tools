@@ -4,10 +4,10 @@ If you have a large monorepo and your root `package.json` has a lot of dependenc
 only used in some packages (or apps or whatever), you can run this script to move them over.
 I've been using this for a monorepo with close to 500 packages and it's working somewhat well.
 
-## Usage
+## `root-deps` Usage
 
 ```bash
-npx monorepo-root-deps --directory .
+npx -p monorepo-root-deps root-deps --directory .
 ```
 
 ## Options
@@ -16,8 +16,7 @@ npx monorepo-root-deps --directory .
 
 **Required**
 
-The path to your monorepo. Can be a relative path. I would just be cd'd into that directory
-and use `--directory .`.
+The path to your monorepo. Can be a relative path. Mostly just use `-d .`
 
 ### `--dry-run`
 
@@ -63,3 +62,15 @@ is to pass the prefix you use for internal dependencies. E.g. if all your intern
 ### `--include-dev`
 
 Include devDependencies from root package.json. Defaults to true, but you can turn it off.
+
+## `self-imports` Usage
+
+```bash
+npx -p monorepo-root-deps self-imports --directory .
+```
+
+### `--directory` (`-d`)
+
+The path to your monorepo. Can be a relative path. Mostly just use `-d .`
+
+### `--
