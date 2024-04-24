@@ -9,8 +9,8 @@
     "typescript": "4.9.5"
   },
   "bin": {
-    "root-deps": "./bin/root-deps.mjs",
-    "self-imports": "./bin/self-import.mjs"
+    "move-root-deps": "./bin/root-deps.mjs",
+    "fix-self-imports": "./bin/self-import.mjs"
   },
   "packageManager": "pnpm@8.14.0"
 }

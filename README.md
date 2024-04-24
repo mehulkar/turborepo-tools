@@ -7,7 +7,7 @@ I've been using this for a monorepo with close to 500 packages and it's working 
 ## `root-deps` Usage
 
 ```bash
-npx -p monorepo-root-deps root-deps --directory .
+npx -p monorepo-root-deps move-root-deps --directory .
 ```
 
 ## Options
@@ -66,7 +66,7 @@ Include devDependencies from root package.json. Defaults to true, but you can tu
 ## `self-imports` Usage
 
 ```bash
-npx -p monorepo-root-deps self-imports --directory .
+npx -p monorepo-root-deps fix-self-imports --directory .
 ```
 
 ### `--directory` (`-d`)
