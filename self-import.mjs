@@ -157,10 +157,6 @@ export async function main() {
     }
   }
 
-  if (DRY_RUN) {
-    return;
-  }
-
   for (const selfImport of allSelfImports) {
     const file = selfImport.import.location.absolute;
     const data = (await fs.readFile(file, "utf8")).toString();
@@ -171,6 +167,11 @@ export async function main() {
     console.log(
       `replace '${selfImport.fixed.before}' with '${selfImport.fixed.after}' in ${file}`
     );
+
+    if (DRY_RUN) {
+      continue;
+    }
+
     await fs.writeFile(file, fixed, "utf8");
   }
 }
