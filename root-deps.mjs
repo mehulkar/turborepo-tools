@@ -95,6 +95,7 @@ const ONLY = flags.only ?? [];
 const ONLY_PREFIX = flags["only-prefix"] ?? [];
 const KEEP_PRISTINE = flags.pristine ?? [];
 const SKIP_PREFIX = flags["skip-prefix"] ?? [];
+const LIMIT = flags.limit ? Number(flags.limit) : Infinity;
 
 if (dryRun) {
   console.log("doing dry run");
@@ -168,9 +169,11 @@ export async function main() {
       }
     }
 
-    if (!ONLY.includes(key)) {
-      skipped[key] = allRootDeps[key];
-      return m;
+    if (ONLY.length > 0) {
+      if (!ONLY.includes(key)) {
+        skipped[key] = allRootDeps[key];
+        return m;
+      }
     }
 
     if (SKIP_PREFIX.some((prefix) => key.startsWith(prefix))) {
@@ -208,14 +211,14 @@ export async function main() {
   // For each root dependency, check all the for their imports
   for (const [dependency, version] of Object.entries(rootDeps)) {
     const printable = getPrintable(dependency, rootDepsMinWidth);
-    if (counter >= flags.limit) {
+    if (counter >= LIMIT) {
       debug(`${printable}skip (reached max moves)`);
       continue;
     }
 
     counter++;
 
-    console.log(`${printable}analyzing (${counter}/${flags.limit})`);
+    console.log(`${printable}analyzing (${counter}/${LIMIT})`);
 
     for (const pkg of packages) {
       const pkgJSONPath = join(projectDir, pkg, "package.json");
@@ -241,7 +244,7 @@ export async function main() {
       }
 
       // The dependency key wouldn't be in imports if no files are importing it.
-      if (!imports.get(importableDependency)) {
+      if (!imports.has(importableDependency)) {
         continue;
       }
 

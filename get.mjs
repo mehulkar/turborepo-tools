@@ -44,15 +44,16 @@ function getImportsFromFile(fileName) {
   }
 }
 
-function getPackageNamesFromImports(imports) {
-  return imports.map((i) => {
-    const split = i.split("/");
+function getImportDetails(imports) {
+  return imports.map((p) => {
+    const split = p.split("/");
 
-    if (i.startsWith("@")) {
-      return `${split[0]}/${split[1]}`;
+    let pkg = split[0];
+    if (p.startsWith("@")) {
+      pkg = `${split[0]}/${split[1]}`;
     }
 
-    return split[0];
+    return { pkg, path: p };
   });
 }
 
@@ -63,22 +64,29 @@ export async function getImportsInDirectory(rootDir, directory) {
     ignore: "**/node_modules/**",
   });
 
+  // map keys are pkgNames
+  // map values are { source, importedPkg, importedPath }
   const all = new Map();
+
   for (const filePath of files) {
     const importsFromFile = getImportsFromFile(filePath);
+    const importDetails = getImportDetails(importsFromFile);
 
-    const pkgNames = getPackageNamesFromImports(importsFromFile);
-
-    if (pkgNames.length === 0) {
+    if (importDetails.length === 0) {
       continue;
     }
 
-    for (const pkg of pkgNames) {
-      if (!all.get(pkg)) {
-        all.set(pkg, []);
+    // group all the imports by the package that is being imported.
+    for (const importDetail of importDetails) {
+      if (!all.get(importDetail.pkg)) {
+        all.set(importDetail.pkg, []);
       }
-      // console.log(`${pkg} imported in ${relative(rootDir, filePath)}`);
-      all.get(pkg).push(filePath);
+
+      all.get(importDetail.pkg).push({
+        name: importDetail.pkg,
+        path: importDetail.path,
+        location: filePath,
+      });
     }
   }
 
