@@ -1,4 +1,3 @@
-import { join } from "path";
 import { builtinModules } from "module";
 import { glob } from "glob";
 import ts from "typescript";
@@ -45,6 +44,18 @@ function getImportsFromFile(fileName) {
   }
 }
 
+function getPackageNamesFromImports(imports) {
+  return imports.map((i) => {
+    const split = i.split("/");
+
+    if (i.startsWith("@")) {
+      return `${split[0]}/${split[1]}`;
+    }
+
+    return split[0];
+  });
+}
+
 // for all .ts files in this directory, check if they import the dependency
 // returns a list of files that import the dependency
 export async function getImportsInDirectory(rootDir, directory) {
@@ -72,16 +83,4 @@ export async function getImportsInDirectory(rootDir, directory) {
   }
 
   return all;
-}
-
-function getPackageNamesFromImports(imports) {
-  return imports.map((i) => {
-    const split = i.split("/");
-
-    if (i.startsWith("@")) {
-      return `${split[0]}/${split[1]}`;
-    }
-
-    return split[0];
-  });
 }
