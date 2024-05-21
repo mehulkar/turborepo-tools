@@ -1,21 +1,16 @@
 #!/usr/bin/env node
 
 import { main } from "../src/self-import.mjs";
+import { GLOBAL_FLAGS } from "./global-flags.mjs";
 
 const { values: flags } = parseArgs({
 	strict: true,
 	options: {
+		...GLOBAL_FLAGS,
 		"dry-run": {
 			type: "boolean",
 			multiple: false,
 			default: false,
-		},
-		// The path to your repo. In most cases, just do `-d .` when you're already in the repo dir.
-		directory: {
-			type: "string",
-			multiple: false,
-			short: "d",
-			default: ".",
 		},
 		limit: {
 			type: "string",

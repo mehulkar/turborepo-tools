@@ -2,17 +2,12 @@
 
 import { parseArgs } from "node:util";
 import { main } from "../src/root-deps.mjs";
+import { GLOBAL_FLAGS } from "./global-flags.mjs";
 
 const { values: flags } = parseArgs({
 	strict: true,
 	options: {
-		// The path to your repo. In most cases, just do `-d .` when you're already in the repo dir.
-		directory: {
-			type: "string",
-			multiple: false,
-			short: "d",
-			default: ".",
-		},
+		...GLOBAL_FLAGS,
 
 		// No diffs at the end, just the logs
 		"dry-run": {
@@ -48,6 +43,7 @@ const { values: flags } = parseArgs({
 			short: "s",
 			default: [], // TODO: not sure why, but default isn't working
 		},
+
 		"skip-prefix": {
 			type: "string",
 			multiple: true,
