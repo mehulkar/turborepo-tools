@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 
-import { main } from "../self-import.mjs";
+import { main } from "../src/self-import.mjs";
 main().catch(console.error);

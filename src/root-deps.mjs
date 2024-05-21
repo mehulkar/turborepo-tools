@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import { join, resolve, relative, dirname } from "path";
 import { readWorkspacePackages, getMinWidth, getPrintable } from "./utils.mjs";
-import { getImportsInDirectory } from "./get.mjs";
+import { getImportsInDirectory } from "../get.mjs";
 import { debuglog, parseArgs } from "node:util";
 
 const debug = debuglog("monorepo");
