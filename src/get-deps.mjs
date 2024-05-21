@@ -2,8 +2,10 @@ import { Workspace } from "@turbo/repository";
 
 export async function main({ directory, pkg, recursive }) {
   const workspace = await Workspace.find(directory);
-  const packages = await workspace.findPackages();
-  const graph = await workspace.findPackagesWithGraph();
+  const [packages, graph] = Promise.all([
+    workspace.findPackages(),
+    workspace.findPackagesWithGraph(),
+  ]);
 
   // create a map keyed by the relative path of each package
   // so we can look up dependencies/dependents. findPackagesWithGraph is keyed by relative path
