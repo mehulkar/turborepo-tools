@@ -1,11 +1,7 @@
-import { Workspace } from "@turbo/repository";
+import { getPackageWithGraph } from "./utils/turbo.mjs";
 
 export async function main({ directory, pkg, recursive }) {
-  const workspace = await Workspace.find(directory);
-  const [packages, graph] = Promise.all([
-    workspace.findPackages(),
-    workspace.findPackagesWithGraph(),
-  ]);
+  const [packages, graph] = await getPackageWithGraph(directory);
 
   // create a map keyed by the relative path of each package
   // so we can look up dependencies/dependents. findPackagesWithGraph is keyed by relative path

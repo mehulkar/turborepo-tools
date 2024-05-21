@@ -1,20 +1,12 @@
 import fs from "fs/promises";
-import { join, resolve, relative, dirname } from "path";
-import { readWorkspacePackages, getMinWidth, getPrintable } from "./utils.mjs";
-import { getImportsInDirectory } from "../get.mjs";
 import { debuglog } from "node:util";
+import { join, resolve, relative, dirname } from "path";
+import { readWorkspacePackages } from "./utils/turbo.mjs";
+import { getMinWidth, getPrintable } from "./utils/logger.mjs";
+import { getImportsInDirectory } from "./utils/get-imports.mjs";
+import { readPackageJson, writePackageJson } from "./utils/pkg-json.mjs";
 
 const debug = debuglog("monorepo");
-
-async function readPackageJson(filePath) {
-  const fileContents = await fs.readFile(filePath, "utf8");
-  return JSON.parse(fileContents);
-}
-
-async function writePackageJson(filePath, content) {
-  const stringified = JSON.stringify(content, null, 2);
-  await fs.writeFile(filePath, `${stringified}\n`, "utf8");
-}
 
 export async function main(flags) {
   const projectDir = resolve(flags.directory);

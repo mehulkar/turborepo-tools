@@ -1,8 +1,8 @@
-import { parseArgs, debuglog } from "node:util";
-import { resolve, join, relative, dirname } from "node:path";
 import fs from "fs/promises";
-import { readWorkspacePackages } from "./utils.mjs";
-import { getImportsInDirectory } from "../get.mjs";
+import { debuglog } from "node:util";
+import { resolve, join, relative, dirname } from "node:path";
+import { readWorkspacePackages } from "./utils/turbo.mjs";
+import { getImportsInDirectory } from "./utils/get-imports.mjs";
 
 const debug = debuglog("self-import");
 
