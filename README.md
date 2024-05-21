@@ -1,4 +1,4 @@
-# `monorepo-root-deps`
+# `turborepo-tools`
 
 If you have a large monorepo and your root `package.json` has a lot of dependencies that are
 only used in some packages (or apps or whatever), you can run this script to move them over.
@@ -7,7 +7,7 @@ I've been using this for a monorepo with close to 500 packages and it's working 
 ### `move-root-deps`
 
 ```bash
-npx -p monorepo-root-deps move-root-deps --directory .
+npx -p turborepo-tools move-root-deps --directory .
 ```
 
 **Options**
@@ -27,7 +27,7 @@ npx -p monorepo-root-deps move-root-deps --directory .
 ### `self-imports`
 
 ```bash
-npx -p monorepo-root-deps fix-self-imports --directory .
+npx -p turborepo-tools fix-self-imports --directory .
 ```
 
 **Options**
@@ -42,7 +42,7 @@ npx -p monorepo-root-deps fix-self-imports --directory .
 ### `get-deps`
 
 ```bash
-npx -p monorepo-root-deps get-deps --directory . --package @internal/foo
+npx -p turborepo-tools get-deps --directory . --package @internal/foo
 ```
 
 **Options**
