@@ -1,3 +1,5 @@
+import fs from "node:fs/promises";
+
 export async function readPackageJson(filePath) {
 	const fileContents = await fs.readFile(filePath, "utf8");
 	return JSON.parse(fileContents);
