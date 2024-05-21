@@ -10,7 +10,8 @@
 	"bin": {
 		"move-root-deps": "./bin/root-deps.mjs",
 		"get-deps": "./bin/get-deps.mjs",
-		"fix-self-imports": "./bin/self-import.mjs"
+		"fix-self-imports": "./bin/self-import.mjs",
+		"footprint": "./bin/footprint.mjs"
 	},
 	"dependencies": {
 		"@turbo/repository": "0.0.1-canary.9",

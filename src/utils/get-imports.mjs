@@ -57,7 +57,7 @@ function getImportDetails(imports) {
 	});
 }
 
-// for all .ts files in this directory, check if they import the dependency
+// for all .ts files in this directory, check if they import any dependency
 // returns a list of files that import the dependency
 export async function getImportsInDirectory(rootDir, directory) {
 	const files = await glob(`${rootDir}/${directory}/**/*.ts`, {
@@ -68,6 +68,8 @@ export async function getImportsInDirectory(rootDir, directory) {
 	// map values are { source, importedPkg, importedPath }
 	const all = new Map();
 
+	// For each file, get all the imports, and turn it into a structured object
+	// that includes the imported package and the speciifc path that is imported
 	for (const filePath of files) {
 		const importsFromFile = getImportsFromFile(filePath);
 		const importDetails = getImportDetails(importsFromFile);

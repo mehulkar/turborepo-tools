@@ -1,7 +1,6 @@
-import fs from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
 import { debuglog } from "node:util";
-import { getImportsInDirectory } from "./utils/get-imports.mjs";
+import { main as getAllImports } from "./utils/get-all-imports.mjs";
 import { getMinWidth, getPrintable } from "./utils/logger.mjs";
 import { readPackageJson, writePackageJson } from "./utils/pkg-json.mjs";
 import { readWorkspacePackages } from "./utils/turbo.mjs";
@@ -53,15 +52,6 @@ export async function main(flags) {
 	}
 
 	const rootPackageJsonPath = join(projectDir, "package.json");
-	const _packages = await readWorkspacePackages(projectDir);
-	console.log(`${_packages.length} packages found in ${projectDir}`);
-
-	if (!_packages.length) {
-		return;
-	}
-
-	// weird naming because i'm too lazy to go update the references
-	const packages = _packages.map((p) => p.relativePath).sort();
 
 	const rootPackageJson = await readPackageJson(rootPackageJsonPath);
 	let allRootDeps = {
@@ -116,11 +106,19 @@ export async function main(flags) {
 	const movedDependencies = {};
 	const keepInRootPackageJSON = [];
 
-	const importsForPackage = {}; // cache imports for each project
-
 	let counter = 0; // counts number of rootDeps we've moved
 
 	const rootDepsMinWidth = getMinWidth(Object.keys(rootDeps));
+
+	const _packages = await readWorkspacePackages(projectDir);
+	console.log(`${_packages.length} packages found in ${projectDir}`);
+	if (!_packages.length) {
+		return;
+	}
+	// weird naming because i'm too lazy to go update the references
+	const packages = _packages.map((p) => p.relativePath).sort();
+
+	const importsByPackage = await getAllImports(projectDir); // This is a Map
 
 	// For each root dependency, check all the for their imports
 	for (const [dependency, version] of Object.entries(rootDeps)) {
@@ -136,21 +134,7 @@ export async function main(flags) {
 
 		for (const pkg of packages) {
 			const pkgJSONPath = join(projectDir, pkg, "package.json");
-			// Check that there's a package.json, otherwise continue
-			if (!(await fs.stat(pkgJSONPath).catch(() => false))) {
-				continue;
-			}
-
-			// Get a map of the deps that were imported in this pkg
-			// Check the cache first, since this is in a loop and
-			// we don't want to analyze the files every time.
-			if (!importsForPackage[pkg]) {
-				const _imports = await getImportsInDirectory(projectDir, pkg);
-				importsForPackage[pkg] = _imports;
-			}
-
-			// Get from the newly populated cache
-			const imports = importsForPackage[pkg];
+			const imports = importsByPackage.get(pkg);
 
 			let importableDependency = dependency;
 			if (includeTypes && dependency.startsWith("@types/")) {
