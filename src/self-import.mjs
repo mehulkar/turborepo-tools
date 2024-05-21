@@ -6,50 +6,15 @@ import { getImportsInDirectory } from "../get.mjs";
 
 const debug = debuglog("self-import");
 
-const { values: flags } = parseArgs({
-  strict: true,
-  options: {
-    "dry-run": {
-      type: "boolean",
-      multiple: false,
-      default: false,
-    },
-    // The path to your repo. In most cases, just do `-d .` when you're already in the repo dir.
-    directory: {
-      type: "string",
-      multiple: false,
-      short: "d",
-      default: ".",
-    },
-    limit: {
-      type: "string",
-      multiple: false,
-      short: "l",
-      default: "10",
-    },
-    only: {
-      type: "string",
-      multiple: true,
-      default: [],
-    },
-  },
-});
+export async function main(flags) {
+  const LIMIT = flags.limit ? Number(flags.limit) : Infinity;
+  const projectDir = resolve(flags.directory);
+  const ONLY = flags.only ?? [];
+  const DRY_RUN = flags["dry-run"] ?? false;
+  if (DRY_RUN) {
+    console.log("doing dry run");
+  }
 
-console.log(flags);
-
-const DRY_RUN = flags["dry-run"] ?? false;
-
-if (DRY_RUN) {
-  console.log("doing dry run");
-}
-
-const LIMIT = flags.limit ? Number(flags.limit) : Infinity;
-const projectDir = resolve(flags.directory);
-const ONLY = flags.only ?? [];
-
-function getImports() {}
-
-export async function main() {
   const packages = await readWorkspacePackages(projectDir);
   console.log(`${packages.length} packages found in ${projectDir}`);
 

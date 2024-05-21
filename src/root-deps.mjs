@@ -2,130 +2,9 @@ import fs from "fs/promises";
 import { join, resolve, relative, dirname } from "path";
 import { readWorkspacePackages, getMinWidth, getPrintable } from "./utils.mjs";
 import { getImportsInDirectory } from "../get.mjs";
-import { debuglog, parseArgs } from "node:util";
+import { debuglog } from "node:util";
 
 const debug = debuglog("monorepo");
-
-const { values: flags } = parseArgs({
-  options: {
-    // The path to your repo. In most cases, just do `-d .` when you're already in the repo dir.
-    directory: {
-      type: "string",
-      multiple: false,
-      short: "d",
-      default: ".",
-    },
-
-    // No diffs at the end, just the logs
-    "dry-run": {
-      type: "boolean",
-      multiple: false,
-      default: false,
-    },
-
-    // Limit the number of moved dependencies. If you have a lot you might just want to do a
-    // few at a time so the diff is more easily reviewable.
-    limit: {
-      type: "string",
-      multiple: false,
-      short: "l",
-      default: "10",
-    },
-
-    // No diffs to these directories. If the directories are packages, and they have imports
-    // those imports will stay in the root package.json.
-    // TODO: allow including directories that _aren't_ packages.
-    pristine: {
-      type: "string",
-      multiple: true,
-      short: "p",
-      default: [], // TODO: not sure why, but default isn't working
-    },
-
-    // Some packages that are either used globally in scripts or for some
-    // either caused CI to break. We can probably move them individually
-    skip: {
-      type: "string",
-      multiple: true,
-      short: "s",
-      default: [], // TODO: not sure why, but default isn't working
-    },
-    "skip-prefix": {
-      type: "string",
-      multiple: true,
-      default: [], // TODO: not sure why, but default isn't working
-    },
-
-    // Include devDependencies
-    "include-dev": {
-      type: "boolean",
-      default: true,
-    },
-
-    // Handle `@types/*` dependencies in root package.json. This uses naming conventions
-    // For `@types/foo`, it will look for imports of 'foo' to determine whether `@types/foo` should
-    // be moved.
-    "include-types": {
-      type: "boolean",
-      default: true,
-    },
-
-    "only-prefix": {
-      type: "string",
-      multiple: true,
-      default: [],
-    },
-    only: {
-      type: "string",
-      multiple: true,
-      default: [],
-    },
-  },
-  strict: true,
-});
-
-console.log(flags);
-
-const projectDir = resolve(flags.directory);
-const dryRun = flags["dry-run"];
-const includeDevDeps = flags["include-dev"];
-const includeTypes = flags["include-types"];
-const SKIP = flags.skip ?? [];
-const ONLY = flags.only ?? [];
-const ONLY_PREFIX = flags["only-prefix"] ?? [];
-const KEEP_PRISTINE = flags.pristine ?? [];
-const SKIP_PREFIX = flags["skip-prefix"] ?? [];
-const LIMIT = flags.limit ? Number(flags.limit) : Infinity;
-
-if (dryRun) {
-  console.log("doing dry run");
-}
-
-if (SKIP_PREFIX.includes("@types/") && includeTypes) {
-  throw new Error(
-    "--skip-prefix=@types/ and --include-types don't make sense together"
-  );
-}
-
-if (ONLY_PREFIX.length > 0) {
-  if (SKIP.length > 0) {
-    throw new Error("Cannot use both --only-prefix && --skip together");
-  }
-
-  if (SKIP_PREFIX.length > 0) {
-    throw new Error("Cannot use both --only-prefix && --skip-prefix together");
-  }
-}
-
-if (ONLY.length > 0) {
-  if (SKIP.length > 0) {
-    throw new Error("Cannot use both --only && --skip together");
-  }
-
-  if (SKIP_PREFIX.length > 0) {
-    throw new Error("Cannot use both --only && --skip-prefix together");
-  }
-}
 
 async function readPackageJson(filePath) {
   const fileContents = await fs.readFile(filePath, "utf8");
@@ -137,7 +16,50 @@ async function writePackageJson(filePath, content) {
   await fs.writeFile(filePath, `${stringified}\n`, "utf8");
 }
 
-export async function main() {
+export async function main(flags) {
+  const projectDir = resolve(flags.directory);
+  const dryRun = flags["dry-run"];
+  const includeDevDeps = flags["include-dev"];
+  const includeTypes = flags["include-types"];
+  const SKIP = flags.skip ?? [];
+  const ONLY = flags.only ?? [];
+  const ONLY_PREFIX = flags["only-prefix"] ?? [];
+  const KEEP_PRISTINE = flags.pristine ?? [];
+  const SKIP_PREFIX = flags["skip-prefix"] ?? [];
+  const LIMIT = flags.limit ? Number(flags.limit) : Infinity;
+
+  if (dryRun) {
+    console.log("doing dry run");
+  }
+
+  if (SKIP_PREFIX.includes("@types/") && includeTypes) {
+    throw new Error(
+      "--skip-prefix=@types/ and --include-types don't make sense together"
+    );
+  }
+
+  if (ONLY_PREFIX.length > 0) {
+    if (SKIP.length > 0) {
+      throw new Error("Cannot use both --only-prefix && --skip together");
+    }
+
+    if (SKIP_PREFIX.length > 0) {
+      throw new Error(
+        "Cannot use both --only-prefix && --skip-prefix together"
+      );
+    }
+  }
+
+  if (ONLY.length > 0) {
+    if (SKIP.length > 0) {
+      throw new Error("Cannot use both --only && --skip together");
+    }
+
+    if (SKIP_PREFIX.length > 0) {
+      throw new Error("Cannot use both --only && --skip-prefix together");
+    }
+  }
+
   const rootPackageJsonPath = join(projectDir, "package.json");
   const _packages = await readWorkspacePackages(projectDir);
   console.log(`${_packages.length} packages found in ${projectDir}`);
