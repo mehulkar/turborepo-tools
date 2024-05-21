@@ -10,6 +10,7 @@
   },
   "bin": {
     "move-root-deps": "./bin/root-deps.mjs",
+    "get-deps": "./bin/get-deps.mjs",
     "fix-self-imports": "./bin/self-import.mjs"
   },
   "packageManager": "pnpm@8.14.0"
