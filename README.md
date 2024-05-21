@@ -18,9 +18,9 @@ npx -p monorepo-root-deps move-root-deps --directory .
 | `--limit`           | `-l`  | Limit the number of deps to move                    |
 | `--dry-run`         |       | Log and exit                                        |
 | `--pristine`        | `-p`  | Specify dirs you don't want to touch                |
-| `--skip`            | `-s`  | Skip some deps                                      |
-| `--skip-prefix`     |       | Same idea as `--skip`. Can use multiple times       |
-| `--only`            |       | Move only the dep specified. Can use multiple times |
+| `--skip`            | `-s`  | Skip some deps, can use multiple times              |
+| `--skip-prefix`     |       | Same idea as `--skip`                               |
+| `--only`            |       | Move only the dep specified, can use multiple times |
 | `--only-prefix`     |       | Same idea as `--only`                               |
 | `--include-dev`     |       | Includes `devDependencies` (default true)           |
 
