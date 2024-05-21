@@ -8,7 +8,7 @@ export async function readWorkspacePackages(dir) {
 
 export async function getPackageWithGraph(dir) {
 	const workspace = await Workspace.find(dir);
-	const [packages, graph] = Promise.all([
+	const [packages, graph] = await Promise.all([
 		workspace.findPackages(),
 		workspace.findPackagesWithGraph(),
 	]);
