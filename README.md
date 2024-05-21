@@ -12,56 +12,17 @@ npx -p monorepo-root-deps move-root-deps --directory .
 
 ### Options
 
-#### `--directory` (`-d`)
-
-**Required**
-
-The path to your monorepo. Can be a relative path. Mostly just use `-d .`
-
-#### `--dry-run`
-
-Run the script and show a bunch of logs about what will happen, but don't actually do it. Useful
-for debugging.
-
-#### `--limit` (`-l`)
-
-Only move some dependencies at a time. When the limit is reached, the script will stop.
-
-#### `--pristine` (`-p`)
-
-**Accepts multiple**
-
-Specify the directories you don't want to change. This is the relative path to the directory
-that contains packages that you don't want to change.
-
-E.g.
-
-```bash
-npx monorepo-root-deps --directory . --pristine packages/foobarbaz
-```
-
-Any root dependencies that are imported in files in `packages/foobarbarz/` will
-be retained in the root package.json also. All other packages will still get
-those dependencies moved into them though.
-
-#### `--skip` (`-s`)
-
-**Accepts multiple**
-
-Skip dependencies that you don't want moved. E.g. if you want to keep `eslint` in your root package.json
-pass it in as this flag option.
-
-#### `--skip-prefix`
-
-**Accepts multiple**
-
-Same as `--skip`, except you can use prefixes. E.g. `--skip-prefix="@types/"`. Another useful thing
-is to pass the prefix you use for internal dependencies. E.g. if all your internal packages are named
-`@repo/whatever` , you can use `--skip-prefix=@repo/` to skip moving them.
-
-#### `--include-dev`
-
-Include devDependencies from root package.json. Defaults to true, but you can turn it off.
+| Name                | Short | Description                                         |
+| ------------------- | ----- | --------------------------------------------------- |
+| `--directory` (req) | `-d`  | path to your monorepo. Can be a relative path       |
+| `--limit`           | `-l`  | Limit the number of deps to move                    |
+| `--dry-run`         |       | Log and exit                                        |
+| `--pristine`        | `-p`  | Specify dirs you don't want to touch                |
+| `--skip`            | `-s`  | Skip some deps                                      |
+| `--skip-prefix`     | `     | Same idea as `--skip`. Can use multiple times       |
+| `--only`            | `     | Move only the dep specified. Can use multiple times |
+| `--only-prefix`     | `     | Same idea as `--only`                               |
+| `--include-dev`     | `     | Includes `devDependencies` (default true)           |
 
 ## `self-imports` Usage
 
@@ -71,17 +32,12 @@ npx -p monorepo-root-deps fix-self-imports --directory .
 
 ### Options
 
-#### `--directory` (`-d`)
-
-The path to your monorepo. Can be a relative path. Mostly just use `-d .`
-
-### `--dry-run`
-
-### `--limit`
-
-### `--only`
-
----
+| Name                | Short | Description                                         |
+| ------------------- | ----- | --------------------------------------------------- |
+| `--directory` (req) | `-d`  | path to your monorepo. Can be a relative path       |
+| `--dry-run`         |       | Log and exit                                        |
+| `--limit`           | `-l`  | Limit the number of deps to move                    |
+| `--only`            | `     | Move only the dep specified. Can use multiple times |
 
 ## `get-deps`
 
@@ -91,8 +47,8 @@ npx -p monorepo-root-deps get-deps --directory . --package @internal/foo
 
 ### Options
 
-#### `--directory` (`-d`)
-
-#### `--package` (`-p`)
-
-#### `--recursive` (`-r`)
+| Name                | Short | Description                                   |
+| ------------------- | ----- | --------------------------------------------- |
+| `--directory` (req) | `-d`  | path to your monorepo. Can be a relative path |
+| `--package`         | `-p`  | Required. specify a single package            |
+| `--recursive`       | `-r`  | Crawl up the dependent tree                   |
