@@ -1,16 +1,11 @@
-import { getPackageWithGraph } from "./utils/turbo.mjs";
+import { getPackageMaps, getPackageWithGraph } from "./utils/turbo.mjs";
 
 export async function main({ directory, pkg, recursive }) {
 	const [packages, graph] = await getPackageWithGraph(directory);
 
 	// create a map keyed by the relative path of each package
 	// so we can look up dependencies/dependents. findPackagesWithGraph is keyed by relative path
-	const pathToName = new Map();
-	const nameToPath = new Map();
-	for (const pkg of packages) {
-		pathToName.set(pkg.relativePath, pkg.name);
-		nameToPath.set(pkg.name, pkg.relativePath);
-	}
+	const { pathToName, nameToPath } = getPackageMaps(packages);
 
 	const pkgPath = nameToPath.get(pkg);
 
