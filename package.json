@@ -8,11 +8,11 @@
 		"lint:fix": "biome check --apply src/** bin/**"
 	},
 	"bin": {
-		"move-root-deps": "./bin/root-deps.mjs",
-		"get-deps": "./bin/get-deps.mjs",
-		"fix-self-imports": "./bin/self-import.mjs",
-		"footprint": "./bin/footprint.mjs",
-		"has-script": "./bin/has-script.mjs"
+		"move-root-deps": "bin/root-deps.mjs",
+		"get-deps": "bin/get-deps.mjs",
+		"fix-self-imports": "bin/self-import.mjs",
+		"footprint": "bin/footprint.mjs",
+		"has-script": "bin/has-script.mjs"
 	},
 	"dependencies": {
 		"@turbo/repository": "0.0.1-canary.9",
