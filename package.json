@@ -1,7 +1,7 @@
 {
 	"name": "turborepo-tools",
 	"homepage": "https://github.com/mehulkar/turborepo-tools",
-	"version": "0.7.2",
+	"version": "0.7.3",
 	"type": "module",
 	"scripts": {
 		"lint": "biome check src/** bin/**",
