@@ -5,7 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"lint": "biome check src/** bin/**",
-		"lint:fix": "biome check --apply src/** bin/**"
+		"lint:fix": "biome check --apply src/** bin/**",
+		"postpublish": "git push --follow-tags"
 	},
 	"bin": {
 		"move-root-deps": "bin/root-deps.mjs",
