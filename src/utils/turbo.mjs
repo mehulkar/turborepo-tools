@@ -16,7 +16,7 @@ export async function getPackageWithGraph(dir) {
 	return [packages, graph];
 }
 
-export async function getPackageMaps(packages) {
+export function getPackageMaps(packages) {
 	// create a map keyed by the relative path of each package
 	// so we can look up dependencies/dependents. findPackagesWithGraph is keyed by relative path
 	const pathToName = new Map();
