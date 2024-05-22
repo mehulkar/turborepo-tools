@@ -1,18 +1,13 @@
 #!/usr/bin/env node
 
 import { main } from "../src/get-deps.mjs";
-
 import { parseArgs } from "node:util";
+import { GLOBAL_FLAGS } from "./global-flags.mjs";
+
 const { values: flags } = parseArgs({
 	strict: true,
 	options: {
-		// The path to your repo. In most cases, just do `-d .` when you're already in the repo dir.
-		directory: {
-			type: "string",
-			multiple: false,
-			short: "d",
-			default: ".",
-		},
+		...GLOBAL_FLAGS,
 
 		package: {
 			type: "string",
@@ -41,6 +36,10 @@ if (!flags.package) {
 
 const recursive = flags.recursive ?? false;
 
-main({ directory: flags.directory, pkg: flags.package, recursive })
+main({
+	directory: flags.directory,
+	pkg: flags.package,
+	recursive,
+})
 	.then(console.log)
 	.catch(console.error);
