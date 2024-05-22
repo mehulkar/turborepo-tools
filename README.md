@@ -52,3 +52,18 @@ npx -p turborepo-tools get-deps --directory . --package @internal/foo
 | `--directory` (req) | `-d`  | path to your monorepo. Can be a relative path |
 | `--package`         | `-p`  | Required. specify a single package            |
 | `--recursive`       | `-r`  | Crawl up the dependent tree                   |
+
+### `has-script`
+
+Checks all packages for a given script.
+
+```bash
+npx -p turborepo-tools has-script --directory . --task test
+```
+
+**Options**
+
+| Name                | Short | Description                                      |
+| ------------------- | ----- | ------------------------------------------------ |
+| `--directory` (req) | `-d`  | path to your monorepo. Can be a relative path    |
+| `--task`            | `-p`  | Required. specify the script you are looking for |
