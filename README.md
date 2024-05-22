@@ -7,7 +7,7 @@ I've been using this for a monorepo with close to 500 packages and it's working 
 ### `move-root-deps`
 
 ```bash
-npx -p turborepo-tools move-root-deps --directory .
+npx -p turborepo-tools move-root-deps -d .
 ```
 
 **Options**
@@ -27,7 +27,7 @@ npx -p turborepo-tools move-root-deps --directory .
 ### `self-imports`
 
 ```bash
-npx -p turborepo-tools fix-self-imports --directory .
+npx -p turborepo-tools fix-self-imports -d .
 ```
 
 **Options**
@@ -42,7 +42,7 @@ npx -p turborepo-tools fix-self-imports --directory .
 ### `get-deps`
 
 ```bash
-npx -p turborepo-tools get-deps --directory . --package @internal/foo
+npx -p turborepo-tools get-deps -d . -p @internal/foo
 ```
 
 **Options**
@@ -53,12 +53,23 @@ npx -p turborepo-tools get-deps --directory . --package @internal/foo
 | `--package`         | `-p`  | Required. specify a single package            |
 | `--recursive`       | `-r`  | Crawl up the dependent tree                   |
 
+### `footprint`
+
+```bash
+npx -p turborepo-tools footprint -d . -p @internal/foo
+```
+
+| Name                | Short | Description                                   |
+| ------------------- | ----- | --------------------------------------------- |
+| `--directory` (req) | `-d`  | path to your monorepo. Can be a relative path |
+| `--package`         | `-p`  | Required. specify a single package            |
+
 ### `has-script`
 
 Checks all packages for a given script.
 
 ```bash
-npx -p turborepo-tools has-script --directory . --task test
+npx -p turborepo-tools has-script -d . -t test
 ```
 
 **Options**
@@ -66,4 +77,4 @@ npx -p turborepo-tools has-script --directory . --task test
 | Name                | Short | Description                                      |
 | ------------------- | ----- | ------------------------------------------------ |
 | `--directory` (req) | `-d`  | path to your monorepo. Can be a relative path    |
-| `--task`            | `-p`  | Required. specify the script you are looking for |
+| `--task`            | `-t`  | Required. specify the script you are looking for |
