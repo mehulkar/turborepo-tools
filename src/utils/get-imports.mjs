@@ -69,7 +69,7 @@ export async function getImportsInDirectory(rootDir, directory) {
 	const all = new Map();
 
 	// For each file, get all the imports, and turn it into a structured object
-	// that includes the imported package and the speciifc path that is imported
+	// that includes the imported package and the specific path that is imported
 	for (const filePath of files) {
 		const importsFromFile = getImportsFromFile(filePath);
 		const importDetails = getImportDetails(importsFromFile);

@@ -1,5 +1,5 @@
 import { main as getDependents } from "./get-deps.mjs";
-import { main as getAllImports } from "./utils/get-all-imports.mjs";
+import { getImportsInPackage } from "./utils/get-imports-in-package.mjs";
 
 export async function main({ dir, pkg }) {
 	const ancestors = await getDependents({
@@ -19,12 +19,14 @@ export async function main({ dir, pkg }) {
 
 	console.log(`- ${ancestorTree.length} have it in their tree`);
 
-	// This is a map for each package
-	const importsMap = await getAllImports(dir, pkg);
+	// This is a map for this package
+	const importsMap = await getImportsInPackage(dir, pkg);
+
 	let totalFiles = 0;
-	for (const [pkg, files] of importsMap.entries()) {
+	for (const [_pkg, files] of importsMap.entries()) {
 		totalFiles += files.length;
 	}
+
 	console.log(
 		`- imported by ${totalFiles} files across ${importsMap.size} packages`,
 	);

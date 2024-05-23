@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+import { resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { main } from "../src/root-deps.mjs";
 import { GLOBAL_FLAGS } from "./global-flags.mjs";
@@ -78,6 +78,58 @@ const { values: flags } = parseArgs({
 	},
 });
 
-console.log("flags", flags);
+const normalizedFlags = normalizeFlags(flags);
+validateFlags(normalizedFlags);
 
-main(flags).catch(console.error);
+console.log("flags", normalizedFlags);
+
+if (normalizeFlags.dryRun) {
+	console.log("doing dry run");
+}
+
+main(normalizedFlags).catch(console.error);
+
+function normalizeFlags(flags) {
+	return {
+		directory: resolve(flags.directory),
+		dryRun: flags["dry-run"],
+		includeDevDeps: flags["include-dev"],
+		includeTypes: flags["include-types"],
+		limit: flags.limit ? Number(flags.limit) : Number.POSITIVE_INFINITY,
+		only: flags.only ?? [],
+		onlyPrefix: flags["only-prefix"] ?? [],
+		pristine: flags.pristine ?? [],
+		skip: flags.skip ?? [],
+		skipPrefix: flags["skip-prefix"] ?? [],
+	};
+}
+
+function validateFlags(flags) {
+	if (flags.skipPrefix.includes("@types/") && flags.includeTypes) {
+		throw new Error(
+			"--skip-prefix=@types/ and --include-types don't make sense together",
+		);
+	}
+
+	if (flags.onlyPrefix.length > 0) {
+		if (skip.length > 0) {
+			throw new Error("Cannot use both --only-prefix && --skip together");
+		}
+
+		if (flags.skipPrefix.length > 0) {
+			throw new Error(
+				"Cannot use both --only-prefix && --skip-prefix together",
+			);
+		}
+	}
+
+	if (flags.only.length > 0) {
+		if (flags.skip.length > 0) {
+			throw new Error("Cannot use both --only && --skip together");
+		}
+
+		if (flags.skipPrefix.length > 0) {
+			throw new Error("Cannot use both --only && --skip-prefix together");
+		}
+	}
+}

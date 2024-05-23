@@ -1,6 +1,6 @@
-import { Workspace } from "@turbo/repository";
-import { join } from "node:path";
 import * as fs from "node:fs/promises";
+import { join } from "node:path";
+import { Workspace } from "@turbo/repository";
 import { getPackageMaps, readWorkspacePackages } from "./utils/turbo.mjs";
 
 export async function main({ directory, task }) {

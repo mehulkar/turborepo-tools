@@ -1,10 +1,26 @@
 import { getImportsInDirectory } from "./get-imports.mjs";
 import { readWorkspacePackages } from "./turbo.mjs";
 
-export async function main(projectDir, targetPkg) {
+export async function getAllImports(projectDir) {
+	const all = new Map();
+
+	// for each package in the workspace
+	const workspacePackages = await readWorkspacePackages(projectDir);
+	for (const pkg of workspacePackages) {
+		// get its directory and look for all import statements
+		const imports = await getImportsInDirectory(projectDir, pkg.relativePath);
+
+		all.set(pkg.name, imports);
+	}
+
+	return all;
+}
+
+export async function getImportsInPackage(projectDir, targetPkg) {
 	const packagesThatImportTarget = new Map();
 
 	const workspacePackages = await readWorkspacePackages(projectDir);
+
 	if (!workspacePackages.length) {
 		return packagesThatImportTarget;
 	}

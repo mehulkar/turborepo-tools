@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { main } from "../src/get-deps.mjs";
 import { parseArgs } from "node:util";
+import { main } from "../src/get-deps.mjs";
 import { GLOBAL_FLAGS } from "./global-flags.mjs";
 
 const { values: flags } = parseArgs({
