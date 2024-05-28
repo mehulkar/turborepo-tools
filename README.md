@@ -1,10 +1,9 @@
 # `turborepo-tools`
 
-If you have a large monorepo and your root `package.json` has a lot of dependencies that are
-only used in some packages (or apps or whatever), you can run this script to move them over.
-I've been using this for a monorepo with close to 500 packages and it's working somewhat well.
-
 ### `move-root-deps`
+
+Moves dependencies from root `package.json` to the packages
+in your monorepo where they are imported.
 
 ```bash
 npx -p turborepo-tools move-root-deps -d .
