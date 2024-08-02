@@ -9,6 +9,7 @@
 		"postpublish": "git push --follow-tags"
 	},
 	"bin": {
+		"trace-imports": "bin/trace-imports.mjs",
 		"move-root-deps": "bin/root-deps.mjs",
 		"get-deps": "bin/get-deps.mjs",
 		"fix-self-imports": "bin/self-import.mjs",
