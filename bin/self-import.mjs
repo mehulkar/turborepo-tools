@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+import { parseArgs } from "node:util";
 import { main } from "../src/self-import.mjs";
 import { GLOBAL_FLAGS } from "./global-flags.mjs";
 
