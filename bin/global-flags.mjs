@@ -6,4 +6,9 @@ export const GLOBAL_FLAGS = {
 		short: "d",
 		default: ".",
 	},
+	debug: {
+		type: "boolean",
+		multiple: false,
+		default: false,
+	},
 };
