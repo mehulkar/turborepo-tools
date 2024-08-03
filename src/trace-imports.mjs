@@ -28,5 +28,11 @@ export async function main({ directory, importer, imported }) {
 		return [];
 	}
 
-	return importedRefs.map((x) => path.relative(directory, x.location));
+	const map = new Map();
+	for (const ref of importedRefs) {
+		const filepath = path.relative(directory, ref.location);
+		const count = map.get(filepath) ?? 0;
+		map.set(filepath, count + 1);
+	}
+	return map;
 }

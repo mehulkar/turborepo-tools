@@ -33,12 +33,12 @@ main({
 	imported,
 })
 	.then((imports) => {
-		if (imports.length) {
+		if (imports.size > 0) {
 			console.log(
 				`${importer} imports ${imported} from these locations:`
 			);
-			for (const f of imports) {
-				console.log(`- ${f}`);
+			for (const [f, count] of imports.entries()) {
+				console.log(`- [${count} imports] ${f}`);
 			}
 		} else {
 			console.log(`${importer} does not import ${imported}`);
