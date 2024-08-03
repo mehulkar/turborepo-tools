@@ -24,24 +24,11 @@ if (positionals.length !== 2) {
 	throw new Error("give two args");
 }
 
-const importer = positionals[0];
-const imported = positionals[1];
+const pkg1 = positionals[0];
+const pkg2 = positionals[1];
 
 main({
 	directory: flags.directory,
-	importer,
-	imported,
-})
-	.then((imports) => {
-		if (imports.size > 0) {
-			console.log(
-				`${importer} imports ${imported} from these locations:`
-			);
-			for (const [f, count] of imports.entries()) {
-				console.log(`- [${count} imports] ${f}`);
-			}
-		} else {
-			console.log(`${importer} does not import ${imported}`);
-		}
-	})
-	.catch(console.error);
+	pkg1,
+	pkg2,
+}).catch(console.error);
