@@ -33,9 +33,15 @@ main({
 	imported,
 })
 	.then((imports) => {
-		console.log(`${importer} imports ${imported} from these locations`);
-		for (const f of imports) {
-			console.log(`- ${f}`);
+		if (imports.length) {
+			console.log(
+				`${importer} imports ${imported} from these locations:`
+			);
+			for (const f of imports) {
+				console.log(`- ${f}`);
+			}
+		} else {
+			console.log(`${importer} does not import ${imported}`);
 		}
 	})
 	.catch(console.error);

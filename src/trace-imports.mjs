@@ -24,6 +24,9 @@ export async function main({ directory, importer, imported }) {
 		importerPkg.relativePath
 	);
 	const importedRefs = imports.get(imported);
+	if (!importedRefs) {
+		return [];
+	}
 
 	return importedRefs.map((x) => path.relative(directory, x.location));
 }
