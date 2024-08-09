@@ -17,7 +17,17 @@ const { values: flags } = parseArgs({
 	},
 });
 
-console.log("flags", flags);
+if (flags.debug) {
+	console.log("flags", flags);
+}
+
+if (!flags.directory) {
+	throw new Error("--directory flag is required");
+}
+
+if (!flags.package) {
+	throw new Error("--package flag is required");
+}
 
 main({
 	dir: resolve(flags.directory),
