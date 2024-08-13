@@ -14,7 +14,8 @@
 		"get-deps": "bin/get-deps.mjs",
 		"fix-self-imports": "bin/self-import.mjs",
 		"footprint": "bin/footprint.mjs",
-		"has-script": "bin/has-script.mjs"
+		"has-script": "bin/has-script.mjs",
+		"rm-unused-deps": "bin/rm-unused-deps.mjs"
 	},
 	"dependencies": {
 		"@turbo/repository": "0.0.1-canary.9",
