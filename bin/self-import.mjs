@@ -26,6 +26,8 @@ const { values: flags } = parseArgs({
 	},
 });
 
-console.log(flags);
+if (flags.debug) {
+	console.log("flags", flags);
+}
 
 main(flags).catch(console.error);

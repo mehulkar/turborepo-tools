@@ -24,7 +24,9 @@ const { values: flags } = parseArgs({
 	},
 });
 
-console.log("flags", flags);
+if (flags.debug) {
+	console.log("flags", flags);
+}
 
 if (!flags.directory) {
 	throw new Error("--directory is required");
