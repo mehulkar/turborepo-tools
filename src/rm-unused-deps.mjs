@@ -3,12 +3,14 @@ import { readWorkspacePackages } from "./utils/turbo.mjs";
 import { getImportsInDirectory } from "./utils/get-imports.mjs";
 import { readPackageJson, writePackageJson } from "./utils/pkg-json.mjs";
 
-export async function main({ directory, onlyPrefix, skip }) {
+export async function main({ directory, onlyPrefix, targetPackage, skip }) {
 	const packages = await readWorkspacePackages(directory);
 
-	console.log("aslkjlkajsda", skip);
-
 	for (const pkg of packages) {
+		if (targetPackage && pkg.name != targetPackage) {
+			continue;
+		}
+
 		const pkgJSONPath = join(directory, pkg.relativePath, "package.json");
 		const pkgJSON = await readPackageJson(pkgJSONPath);
 
@@ -57,9 +59,6 @@ export async function main({ directory, onlyPrefix, skip }) {
 				}
 
 				if (!pkgImports.get(dep)) {
-					// console.log(
-					// 	`${pkg.name}: removing unused devDependency: ${dep}`
-					// );
 					needsWrite = true;
 					delete pkgJSON.devDependencies[dep];
 				}

@@ -14,6 +14,15 @@ const { values: flags } = parseArgs({
 			multiple: false,
 			default: false,
 		},
+
+		// The package to target removing dependencies from. Omitting this targets all packages.
+		package: {
+			type: "string",
+			multiple: false,
+			short: "p",
+		},
+
+		// Only remove these dependencies from the target packages
 		"only-prefix": {
 			type: "string",
 			multiple: true,
@@ -47,12 +56,14 @@ main({
 	directory: normalizedFlags.directory,
 	onlyPrefix: normalizedFlags.onlyPrefix,
 	skip: normalizedFlags.skip,
+	targetPackage: normalizedFlags.package,
 }).catch(console.error);
 
 function normalizeFlags(flags) {
 	return {
 		...flags,
 		directory: resolve(flags.directory),
-		onlyPrefix: flags["only-prefix"],
+		onlyPrefix: flags["only-prefix"] ?? [],
+		skip: flags.skip ?? [],
 	};
 }
